@@ -2,7 +2,9 @@ package com.example.converter.controller;
 
 import com.example.converter.dto.CurrencyDTO;
 import com.example.converter.services.CurrencyService;
+import com.example.converter.utils.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Date;
 
 @RestController
 @RequestMapping("converter")
@@ -24,11 +27,14 @@ public class ConverterController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<CurrencyDTO> getCurrency(@RequestParam("firstCurrency") String firstCurrency,@RequestParam("secondCurrency")String secondCurrency) throws IOException {
+    public ResponseEntity<Response> getCurrency(@RequestParam("firstCurrency") String firstCurrency,
+                                                @RequestParam("secondCurrency")String secondCurrency) throws IOException {
+
         CurrencyDTO firstCurrencyDTO = currencyService.makeRequest(firstCurrency);
         CurrencyDTO secondCurrencyDTO = currencyService.makeRequest(secondCurrency);
 
-        return new ResponseEntity<>(secondCurrencyDTO, HttpStatus.OK);
+        Response response = currencyService.convert(firstCurrencyDTO,secondCurrencyDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
