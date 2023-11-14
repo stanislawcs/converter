@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Service
@@ -24,8 +25,12 @@ public class CurrencyService {
         this.objectMapper = objectMapper;
     }
 
-    public CurrencyDTO makeRequest(String abbreviation) throws IOException {
+    public CurrencyDTO makeRequest(String abbreviation, LocalDate date) throws IOException {
         StringBuilder url = new StringBuilder("https://api.nbrb.by/exrates/rates/" + abbreviation + "?parammode=2");
+
+        if(date != null){
+            url.append("&ondate=" + date);
+        }
 
         String response = restTemplate.getForObject(url.toString(), String.class);
         Currency currency = objectMapper.readValue(response, Currency.class);
