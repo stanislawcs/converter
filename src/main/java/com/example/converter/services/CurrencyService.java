@@ -18,7 +18,7 @@ public class CurrencyService {
     private final CurrencyConverter currencyConverter;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private StringBuilder url = new StringBuilder("https://api.nbrb.by/exrates/rates/");
+
 
     public CurrencyService(CurrencyConverter currencyConverter, RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.currencyConverter = currencyConverter;
@@ -27,14 +27,14 @@ public class CurrencyService {
     }
 
     public CurrencyDTO makeRequest(String abbreviation) throws IOException {
-        url.append(abbreviation).append("?parammode=2");
+        StringBuilder url = new StringBuilder("https://api.nbrb.by/exrates/rates/").append(abbreviation).append("?parammode=2");
         String response = restTemplate.getForObject(url.toString(), String.class);
         Currency currency = objectMapper.readValue(response, Currency.class);
         return currencyConverter.convertToDTO(currency);
     }
 
     public CurrencyDTO makeRequestWithDate(String abbreviation, LocalDate date) throws JsonProcessingException {
-        url.append(abbreviation).append("?parammode=2").append("&ondate=").append(date);
+        StringBuilder url = new StringBuilder("https://api.nbrb.by/exrates/rates/").append(abbreviation).append("?parammode=2").append("&ondate=").append(date);
         String response = restTemplate.getForObject(url.toString(), String.class);
         Currency currency = objectMapper.readValue(response, Currency.class);
         return currencyConverter.convertToDTO(currency);
