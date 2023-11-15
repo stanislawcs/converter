@@ -6,6 +6,7 @@ import com.example.converter.utils.CurrencyConverter;
 import com.example.converter.models.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,10 +16,18 @@ import java.time.LocalDate;
 @Service
 public class CurrencyService {
 
+    @Value("${api.url}")
+    private String url;
+
+    @Value("${mode}")
+    private String mode;
+
+    @Value("${onDate}")
+    private String onDate;
+
     private final CurrencyConverter currencyConverter;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-
 
     public CurrencyService(CurrencyConverter currencyConverter, RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.currencyConverter = currencyConverter;
@@ -27,15 +36,15 @@ public class CurrencyService {
     }
 
     public CurrencyDTO makeRequest(String abbreviation) throws IOException {
-        StringBuilder url = new StringBuilder("https://api.nbrb.by/exrates/rates/").append(abbreviation).append("?parammode=2");
-        String response = restTemplate.getForObject(url.toString(), String.class);
+        StringBuilder request = new StringBuilder(url).append(abbreviation).append(mode);
+        String response = restTemplate.getForObject(request.toString(), String.class);
         Currency currency = objectMapper.readValue(response, Currency.class);
         return currencyConverter.convertToDTO(currency);
     }
 
     public CurrencyDTO makeRequestWithDate(String abbreviation, LocalDate date) throws JsonProcessingException {
-        StringBuilder url = new StringBuilder("https://api.nbrb.by/exrates/rates/").append(abbreviation).append("?parammode=2").append("&ondate=").append(date);
-        String response = restTemplate.getForObject(url.toString(), String.class);
+        StringBuilder request = new StringBuilder(url).append(abbreviation).append(mode).append(onDate).append(date);
+        String response = restTemplate.getForObject(request.toString(), String.class);
         Currency currency = objectMapper.readValue(response, Currency.class);
         return currencyConverter.convertToDTO(currency);
     }
@@ -45,6 +54,7 @@ public class CurrencyService {
         response.setOfficialRate(firstCurrencyDTO.getCurOfficialRate() / secondCurrencyDTO.getCurOfficialRate() * secondCurrencyDTO.getCurScale());
         return response;
     }
+
 
     private Response makeResponse(CurrencyDTO firstCurrencyDTO, CurrencyDTO secondCurrencyDTO) {
         Response response = new Response();
