@@ -1,6 +1,6 @@
 package com.example.converter.utils;
 
-import com.example.converter.dto.CurrencyDTO;
+import com.example.converter.models.CurrencyDTO;
 import com.example.converter.models.Currency;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

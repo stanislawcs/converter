@@ -1,4 +1,4 @@
-package com.example.converter.utils;
+package com.example.converter.models;
 
 import lombok.Getter;
 import lombok.Setter;

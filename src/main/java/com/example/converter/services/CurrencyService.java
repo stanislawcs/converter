@@ -1,16 +1,15 @@
 package com.example.converter.services;
 
-import com.example.converter.dto.CurrencyDTO;
+import com.example.converter.models.CurrencyDTO;
 import com.example.converter.models.Currency;
 import com.example.converter.utils.CurrencyConverter;
-import com.example.converter.utils.Response;
+import com.example.converter.models.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Service
 public class CurrencyService {

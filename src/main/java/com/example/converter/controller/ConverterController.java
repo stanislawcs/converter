@@ -1,8 +1,8 @@
 package com.example.converter.controller;
 
-import com.example.converter.dto.CurrencyDTO;
+import com.example.converter.models.CurrencyDTO;
 import com.example.converter.services.CurrencyService;
-import com.example.converter.utils.Response;
+import com.example.converter.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
 
 @RestController
 @RequestMapping("converter")
