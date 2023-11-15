@@ -4,6 +4,7 @@ import com.example.converter.models.CurrencyDTO;
 import com.example.converter.models.Currency;
 import com.example.converter.utils.CurrencyConverter;
 import com.example.converter.models.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -17,6 +18,7 @@ public class CurrencyService {
     private final CurrencyConverter currencyConverter;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private StringBuilder url = new StringBuilder("https://api.nbrb.by/exrates/rates/");
 
     public CurrencyService(CurrencyConverter currencyConverter, RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.currencyConverter = currencyConverter;
@@ -24,13 +26,15 @@ public class CurrencyService {
         this.objectMapper = objectMapper;
     }
 
-    public CurrencyDTO makeRequest(String abbreviation, LocalDate date) throws IOException {
-        StringBuilder url = new StringBuilder("https://api.nbrb.by/exrates/rates/" + abbreviation + "?parammode=2");
+    public CurrencyDTO makeRequest(String abbreviation) throws IOException {
+        url.append(abbreviation).append("?parammode=2");
+        String response = restTemplate.getForObject(url.toString(), String.class);
+        Currency currency = objectMapper.readValue(response, Currency.class);
+        return currencyConverter.convertToDTO(currency);
+    }
 
-        if(date != null){
-            url.append("&ondate=" + date);
-        }
-
+    public CurrencyDTO makeRequestWithDate(String abbreviation, LocalDate date) throws JsonProcessingException {
+        url.append(abbreviation).append("?parammode=2").append("&ondate=").append(date);
         String response = restTemplate.getForObject(url.toString(), String.class);
         Currency currency = objectMapper.readValue(response, Currency.class);
         return currencyConverter.convertToDTO(currency);
