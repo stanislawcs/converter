@@ -26,9 +26,9 @@ public class ConverterController {
         this.currencyService = currencyService;
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<Response> getCurrency(@RequestParam("firstCurrency") String firstCurrency,
-                                                @RequestParam("secondCurrency")String secondCurrency,
+    @GetMapping("/get-rate")
+    public ResponseEntity<Response> getRate(@RequestParam("first-currency") String firstCurrency,
+                                                @RequestParam("second-currency")String secondCurrency,
                                                 @RequestParam(value = "date",required = false)
                                                 @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) throws IOException {
 
