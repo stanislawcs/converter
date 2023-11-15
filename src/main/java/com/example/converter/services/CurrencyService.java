@@ -38,7 +38,7 @@ public class CurrencyService {
 
     public Response convert(CurrencyDTO firstCurrencyDTO, CurrencyDTO secondCurrencyDTO) {
         Response response = makeResponse(firstCurrencyDTO, secondCurrencyDTO);
-        response.setOfficialRate(secondCurrencyDTO.getCurOfficialRate() / firstCurrencyDTO.getCurOfficialRate() * firstCurrencyDTO.getCurScale());
+        response.setOfficialRate(firstCurrencyDTO.getCurOfficialRate() / secondCurrencyDTO.getCurOfficialRate() * secondCurrencyDTO.getCurScale());
         return response;
     }
 
@@ -46,7 +46,7 @@ public class CurrencyService {
         Response response = new Response();
         response.setFirstCurrencyName(firstCurrencyDTO.getCurName());
         response.setSecondCurrencyName(secondCurrencyDTO.getCurName());
-        response.setCurScale(secondCurrencyDTO.getCurScale());
+        response.setCurScale(firstCurrencyDTO.getCurScale());
 
         return response;
     }

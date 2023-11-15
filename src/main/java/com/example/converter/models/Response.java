@@ -8,8 +8,8 @@ import lombok.Setter;
 public class Response {
 
     private String firstCurrencyName;
-    private double officialRate;
-    private String secondCurrencyName;
     private int curScale;
+    private String secondCurrencyName;
+    private double officialRate;
 
 }

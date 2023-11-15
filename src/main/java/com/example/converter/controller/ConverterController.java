@@ -28,9 +28,21 @@ public class ConverterController {
 
     @GetMapping("/get-rate")
     public ResponseEntity<Response> getRate(@RequestParam("first-currency") String firstCurrency,
-                                                @RequestParam("second-currency")String secondCurrency,
-                                                @RequestParam(value = "date",required = false)
-                                                @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) throws IOException {
+                                                @RequestParam("second-currency")String secondCurrency) throws IOException {
+
+        LocalDate date = LocalDate.now();
+        CurrencyDTO firstCurrencyDTO = currencyService.makeRequest(firstCurrency,date);
+        CurrencyDTO secondCurrencyDTO = currencyService.makeRequest(secondCurrency,date);
+
+        Response response = currencyService.convert(firstCurrencyDTO,secondCurrencyDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-rate-with-date")
+    public ResponseEntity<Response> getRateWithDate(@RequestParam("first-currency") String firstCurrency,
+                                                    @RequestParam("second-currency")String secondCurrency,
+                                                    @RequestParam(value = "date",required = false)
+                                                    @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) throws IOException {
 
         CurrencyDTO firstCurrencyDTO = currencyService.makeRequest(firstCurrency,date);
         CurrencyDTO secondCurrencyDTO = currencyService.makeRequest(secondCurrency,date);
