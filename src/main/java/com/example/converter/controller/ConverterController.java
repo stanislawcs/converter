@@ -1,6 +1,6 @@
 package com.example.converter.controller;
 
-import com.example.converter.models.CurrencyDTO;
+import com.example.converter.models.Currency;
 import com.example.converter.models.Response;
 import com.example.converter.services.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +30,10 @@ public class ConverterController {
     public ResponseEntity<Response> getRate(@RequestParam("first-currency") String firstCurrency,
                                             @RequestParam("second-currency") String secondCurrency) throws IOException {
 
-        CurrencyDTO firstCurrencyDTO = currencyService.makeRequest(firstCurrency);
-        CurrencyDTO secondCurrencyDTO = currencyService.makeRequest(secondCurrency);
+        Currency firstCurrencyModel = currencyService.makeRequest(firstCurrency);
+        Currency secondCurrencyModel = currencyService.makeRequest(secondCurrency);
 
-        Response response = currencyService.convert(firstCurrencyDTO, secondCurrencyDTO);
+        Response response = currencyService.convert(firstCurrencyModel, secondCurrencyModel);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -43,10 +43,10 @@ public class ConverterController {
                                                     @RequestParam(value = "date", required = false)
                                                     @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) throws IOException {
 
-        CurrencyDTO firstCurrencyDTO = currencyService.makeRequestWithDate(firstCurrency, date);
-        CurrencyDTO secondCurrencyDTO = currencyService.makeRequestWithDate(secondCurrency, date);
+        Currency firstCurrencyModel = currencyService.makeRequestWithDate(firstCurrency, date);
+        Currency secondCurrencyModel = currencyService.makeRequestWithDate(secondCurrency, date);
 
-        Response response = currencyService.convert(firstCurrencyDTO, secondCurrencyDTO);
+        Response response = currencyService.convert(firstCurrencyModel, secondCurrencyModel);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
