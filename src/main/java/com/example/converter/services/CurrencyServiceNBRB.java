@@ -39,12 +39,20 @@ public class CurrencyServiceNBRB implements CurrencyService {
     public Currency makeRequest(String abbreviation) throws IOException {
         log.info("NBRB - profile");
         StringBuilder request = new StringBuilder(url).append(abbreviation).append(mode);
+        if(abbreviation.equals("BYN")){
+            return new Currency("Белорусский рубль",1,1);
+        }
         String response = restTemplate.getForObject(request.toString(), String.class);
         return objectMapper.readValue(response, Currency.class);
     }
 
     public Currency makeRequestWithDate(String abbreviation, LocalDate date) throws IOException {
         StringBuilder request = new StringBuilder(url).append(abbreviation).append(mode).append("&").append(onDate).append(date);
+
+        if(abbreviation.equals("BYN")){
+            return new Currency("Белорусский рубль",1,1);
+        }
+
         String response = restTemplate.getForObject(request.toString(), String.class);
         return objectMapper.readValue(response, Currency.class);
     }
