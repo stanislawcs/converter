@@ -3,52 +3,57 @@ package com.example.converter.services;
 import com.example.converter.models.Currency;
 import com.example.converter.models.Response;
 import com.example.converter.models.cbrf.ExchangeRate;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.modelmapper.ModelMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
-@Profile("dev")
+@Profile("cbrf")
 public class CurrencyServiceCBRF implements CurrencyService {
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
-    private final ModelMapper modelMapper;
+    @Value("${api.url}")
+    private String url;
 
-    public CurrencyServiceCBRF(RestTemplate restTemplate, ObjectMapper objectMapper, ModelMapper modelMapper) {
+    @Value("${api.onDate}")
+    private String onDate;
+
+    private final RestTemplate restTemplate;
+    private final XmlMapper xmlMapper;
+
+    public CurrencyServiceCBRF(RestTemplate restTemplate, XmlMapper xmlMapper) {
         this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
-        this.modelMapper = modelMapper;
+        this.xmlMapper = xmlMapper;
     }
 
     @Override
     public Currency makeRequest(String abbreviation) throws IOException {
-        String url = "https://www.cbr-xml-daily.ru/daily_json.js";
-        String response = restTemplate.getForObject(url, String.class);
-        ExchangeRate exchangeRate = objectMapper.readValue(response,ExchangeRate.class);
-        if(abbreviation.equals("RUB"))
-            return new Currency(100,"Российский рубль",100);
-        return exchangeRate.getCurrencyMap().get(abbreviation);
+        return getCurrencyEntity(url, abbreviation);
     }
 
     @Override
     public Currency makeRequestWithDate(String abbreviation, LocalDate date) throws IOException {
-        return null;
+        StringBuilder urlWithDate = new StringBuilder(url).append(onDate).append(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        return getCurrencyEntity(urlWithDate.toString(), abbreviation);
     }
 
     @Override
     public Response convert(Currency firstCurrency, Currency secondCurrency) {
         Response response = makeResponse(firstCurrency, secondCurrency);
-        response.setOfficialRate(firstCurrency.getValue() / secondCurrency.getValue() * secondCurrency.getNominal());
+        double firstValue = Double.parseDouble(firstCurrency.getValue().replace(",", "."));
+        double secondValue = Double.parseDouble(secondCurrency.getValue().replace(",", "."));
+        response.setOfficialRate(firstValue / secondValue * secondCurrency.getNominal());
         return response;
     }
 
-    private Response makeResponse(Currency firstCurrencyDTO, Currency secondCurrencyDTO){
+    private Response makeResponse(Currency firstCurrencyDTO, Currency secondCurrencyDTO) {
         Response response = new Response();
         response.setFirstCurrencyName(firstCurrencyDTO.getName());
         response.setSecondCurrencyName(secondCurrencyDTO.getName());
@@ -56,5 +61,20 @@ public class CurrencyServiceCBRF implements CurrencyService {
         return response;
     }
 
+    private Currency getCurrencyEntity(String url, String abbreviation) throws IOException {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_XML);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+        List<Currency> currencies = xmlMapper.readValue(responseEntity.getBody(), ExchangeRate.class).getValute();
+
+        for (Currency currency : currencies) {
+            if (currency.getCharCode().equals(abbreviation)) {
+                return currency;
+            }
+        }
+        return new Currency(100, "Российский рубль", "100");
+    }
 
 }

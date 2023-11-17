@@ -14,13 +14,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class HandlerController {
 
-//    @ExceptionHandler
-//    public ResponseEntity<ExceptionResponse> handleInternalServerErrorException(HttpClientErrorException.NotFound e) {
-//
-//        log.error("HttpClientErrorException.NotFound: check currency abbreviation");
-//        ExceptionResponse response = new ExceptionResponse("Check url or currency abbreviation");
-//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//    }
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleInternalServerErrorException(HttpClientErrorException.NotFound e) {
+
+        log.error("HttpClientErrorException.NotFound: check currency abbreviation");
+        ExceptionResponse response = new ExceptionResponse("Check url or currency abbreviation");
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleMissingServletRequestParameterException(
@@ -31,18 +31,18 @@ public class HandlerController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler
-//    public ResponseEntity<ExceptionResponse> handleRuntimeException(RuntimeException e){
-//        log.error("RuntimeException");
-//        ExceptionResponse response = new ExceptionResponse("Check the api url, or parameters");
-//        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleRuntimeException(RuntimeException e) {
+        log.error("RuntimeException");
+        ExceptionResponse response = new ExceptionResponse("Check the api url, or parameters");
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+    public ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         log.error("MethodArgumentTypeMismatchException: ");
         ExceptionResponse response = new ExceptionResponse("Invalid date format, check date parameter");
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 }
