@@ -1,4 +1,4 @@
-package com.example.converter.controller;
+package com.example.converter.controllers;
 
 import com.example.converter.models.Currency;
 import com.example.converter.models.Response;

@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -68,6 +69,9 @@ public class CurrencyServiceCBRF implements CurrencyService {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
         List<Currency> currencies = xmlMapper.readValue(responseEntity.getBody(), ExchangeRate.class).getValute();
+
+        System.out.println(responseEntity);
+        System.out.println(currencies.toString());
 
         for (Currency currency : currencies) {
             if (currency.getCharCode().equals(abbreviation)) {
