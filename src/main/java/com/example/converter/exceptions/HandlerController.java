@@ -31,12 +31,12 @@ public class HandlerController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ExceptionResponse> handleRuntimeException(RuntimeException e) {
-        log.error("RuntimeException");
-        ExceptionResponse response = new ExceptionResponse("Check the api url, or parameters");
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler
+//    public ResponseEntity<ExceptionResponse> handleRuntimeException(RuntimeException e) {
+//        log.error("RuntimeException");
+//        ExceptionResponse response = new ExceptionResponse("Check the api url, or parameters");
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    }
 
     @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {

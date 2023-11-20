@@ -13,19 +13,17 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 @Slf4j
-@Service
-@Profile("nbrb")
+@Service(ServiceType.nbrb)
 public class CurrencyServiceNBRB implements CurrencyService {
 
-    @Value("${api.url}")
+    @Value("${api.nbrb.url}")
     private String url;
 
-    @Value("${api.mode}")
+    @Value("${api.nbrb.mode}")
     private String mode;
 
-    @Value("${api.onDate}")
+    @Value("${api.nbrb.onDate}")
     private String onDate;
-
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;

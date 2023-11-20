@@ -4,6 +4,7 @@ import com.example.converter.models.Currency;
 import com.example.converter.models.Response;
 import com.example.converter.models.cbrf.ExchangeRate;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.*;
@@ -13,17 +14,16 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 
-@Service
-@Profile("cbrf")
+@Service(ServiceType.cbrf)
+@Slf4j
 public class CurrencyServiceCBRF implements CurrencyService {
 
-    @Value("${api.url}")
+    @Value("${api.cbrf.url}")
     private String url;
 
-    @Value("${api.onDate}")
+    @Value("${api.cbrf.onDate}")
     private String onDate;
 
     private final RestTemplate restTemplate;
@@ -36,6 +36,7 @@ public class CurrencyServiceCBRF implements CurrencyService {
 
     @Override
     public Currency makeRequest(String abbreviation) throws IOException {
+        log.info("CBRF");
         return getCurrencyEntity(url, abbreviation);
     }
 
