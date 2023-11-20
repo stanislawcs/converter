@@ -1,5 +1,7 @@
 package com.example.converter.services;
 
+import com.example.converter.exceptions.AbbreviationIsNullException;
+import com.example.converter.exceptions.ResponseIsNullException;
 import com.example.converter.models.Currency;
 import com.example.converter.models.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,22 +40,29 @@ public class CurrencyServiceNBRB implements CurrencyService {
     @Override
     public Currency makeRequest(String abbreviation) throws IOException {
         log.info("NBRB - profile");
-        StringBuilder request = new StringBuilder(url).append(abbreviation).append(mode);
-        if(abbreviation.equals("BYN")){
-            return new Currency("Белорусский рубль",1,1);
+
+        checkCurrencyAbbreviationOnNull(abbreviation);
+
+        if ("BYN".equals(abbreviation)) {
+            return getDefaultCurrency();
         }
-        String response = restTemplate.getForObject(request.toString(), String.class);
+
+        String response = restTemplate.getForObject(url + abbreviation + mode, String.class);
+        validateResponse(response);
         return objectMapper.readValue(response, Currency.class);
     }
 
     public Currency makeRequestWithDate(String abbreviation, LocalDate date) throws IOException {
-        StringBuilder request = new StringBuilder(url).append(abbreviation).append(mode).append("&").append(onDate).append(date);
 
-        if(abbreviation.equals("BYN")){
-            return new Currency("Белорусский рубль",1,1);
+        checkCurrencyAbbreviationOnNull(abbreviation);
+
+        if ("BYN".equals(abbreviation)) {
+            return getDefaultCurrency();
         }
 
-        String response = restTemplate.getForObject(request.toString(), String.class);
+        String response = restTemplate.getForObject(url + abbreviation + mode + "&" + onDate + date, String.class);
+
+        validateResponse(response);
         return objectMapper.readValue(response, Currency.class);
     }
 
@@ -72,5 +81,19 @@ public class CurrencyServiceNBRB implements CurrencyService {
         response.setCurScale(firstCurrencyDTO.getCurScale());
 
         return response;
+    }
+
+    private Currency getDefaultCurrency() {
+        return new Currency("Белорусский рубль", 1, 1);
+    }
+
+    private void validateResponse(String response) {
+        if (response == null)
+            throw new ResponseIsNullException("Response from RestTemplate is null");
+    }
+
+    private void checkCurrencyAbbreviationOnNull(String abbreviation){
+        if(abbreviation == null)
+            throw new AbbreviationIsNullException("Currency abbreviation is null");
     }
 }
