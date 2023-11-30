@@ -80,7 +80,9 @@ public class CurrencyServiceCBRF implements CurrencyService {
             }
         }
 
-        return new Currency(100, "Российский рубль", "100");
+        throw new RuntimeException();
+
+        //return new Currency(100, "Российский рубль", "100");
     }
 
     private void checkAbbreviationOnNull(String abbreviation){
